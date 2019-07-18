@@ -1,5 +1,7 @@
 package com.adrain.controller;
 
+import com.adrain.document.Customer;
+import com.adrain.repository.CustomerRepository;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.MongoException;
 import com.mongodb.client.result.DeleteResult;
@@ -69,5 +71,38 @@ public class DataMongoController {
 		log.info("coming :{}", map);
 		mongoTemplate.insert(map, COLLECTION);
 		return map;
+	}
+	
+	@Autowired
+	private CustomerRepository repository;
+	
+	/**
+	 * mongo 的普通操作
+	 * @return
+	 */
+	@GetMapping("/mongo/save")
+	public boolean saveMongo(){
+		repository.save(new Customer("Alice", "Smith"));
+		repository.save(new Customer("Bob", "Smith"));
+		
+		// fetch all customers
+		System.out.println("Customers found with findAll():");
+		System.out.println("-------------------------------");
+		for (Customer customer : repository.findAll()) {
+			System.out.println(customer);
+		}
+		System.out.println();
+		
+		// fetch an individual customer
+		System.out.println("Customer found with findByFirstName('Alice'):");
+		System.out.println("--------------------------------");
+		System.out.println(repository.findByFirstName("Alice"));
+		
+		System.out.println("Customers found with findByLastName('Smith'):");
+		System.out.println("--------------------------------");
+		for (Customer customer : repository.findByLastName("Smith")) {
+			System.out.println(customer);
+		}
+		return true;
 	}
 }
