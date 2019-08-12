@@ -100,7 +100,7 @@ public class MongoScriptsTestExecutionListener extends AbstractTestExecutionList
 		EncodedResource resource = new EncodedResource(scriptResources.get(0));
 		String s = ScriptUtils.readScript(resource);
 		List<String> statements = new ArrayList<>();
-		ScriptUtils.splitSqlScript(resource,s,ScriptUtils.DEFAULT_STATEMENT_SEPARATOR,ScriptUtils.DEFAULT_COMMENT_PREFIX,ScriptUtils.DEFAULT_BLOCK_COMMENT_START_DELIMITER,ScriptUtils.DEFAULT_BLOCK_COMMENT_START_DELIMITER,statements);
+		ScriptUtils.splitSqlScript(resource,s,ScriptUtils.DEFAULT_STATEMENT_SEPARATOR,ScriptUtils.DEFAULT_COMMENT_PREFIX,ScriptUtils.DEFAULT_BLOCK_COMMENT_START_DELIMITER,ScriptUtils.DEFAULT_BLOCK_COMMENT_END_DELIMITER,statements);
 		for (String stmt : statements) {
 			if (StringUtils.hasText(stmt)) {
 				stmt = stmt.trim();
