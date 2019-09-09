@@ -25,8 +25,11 @@ docker run --name pg -p 5432:5432 \
 
 
 ### 下载sonarqube， note:不要再去用mysql数据库了，当你启动最新的sonarqube镜像时，会报错，说最新v的sonarqube不再支持mysql
-https://hub.docker.com/_/sonarqube/
+
+docker: https://hub.docker.com/_/sonarqube/
+
 maven配置参考：https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-maven/
+
 集成jacoco:https://github.com/SonarSource/sonar-scanning-examples/tree/master/sonarqube-scanner-maven
 
 
