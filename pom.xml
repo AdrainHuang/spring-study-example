@@ -48,5 +48,6 @@
         <module>mongo-example</module>
         <module>jpa-sample</module>
         <module>ad-testng-spring-boot-sample</module>
+        <module>ad-first-maven-plugin</module>
     </modules>
 </project>

@@ -55,6 +55,28 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>com.adrain</groupId>
+                <artifactId>ad-first-maven-plugin</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+                <configuration>
+                    <msg>hello plugin</msg>
+                    <list>
+                        <list>one</list>
+                        <list>two</list>
+                    </list>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <!--phase若不指定，则按@Mojo中defaultPhase属性决定-->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>ad</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

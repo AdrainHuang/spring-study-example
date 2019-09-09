@@ -23,10 +23,10 @@ import java.util.List;
 @RestController
 @Slf4j
 public class SequenceController {
-	
+
 	@Autowired
 	private MongoTemplate mongoTemplate;
-	
+
 	@GetMapping("/sequenceAutoIncrement")
 	public boolean sequenceAutoIncrement(){
 		Student student = new Student();
@@ -34,19 +34,19 @@ public class SequenceController {
 		mongoTemplate.insert(student);
 		return true;
 	}
-	
+
 	@GetMapping("/getstudent")
 	public List<Student> getstudent(){
 		List<Student> students = mongoTemplate.find(Query.query(Criteria.where("name").is("gg")), Student.class);
 		return students;
 	}
-	
+
 	@PostMapping("/enhanceAutoIncKey")
 	public boolean enhanceAutoIncKey(@RequestBody JSONObject abc){
 		mongoTemplate.insert(abc, StudentEnhance.class.getSimpleName());
 		return true;
 	}
-	
+
 	@PostMapping("/utilSequence")
 	public JSONObject utilSequence(@RequestBody JSONObject jsonObject){
 		jsonObject.put("seqId", SequenceUtil.getNextId("test_seq"));

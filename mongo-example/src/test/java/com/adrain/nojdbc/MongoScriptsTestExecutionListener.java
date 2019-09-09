@@ -54,7 +54,14 @@ public class MongoScriptsTestExecutionListener extends AbstractTestExecutionList
 	 */
 	@Override
 	public void afterTestMethod(TestContext testContext) throws Exception {
-		executeScriptScripts(testContext, Script.ExecutionPhase.AFTER_TEST_METHOD);
+		MongoTemplate mongoTemplate = testContext.getApplicationContext().getBean(MongoTemplate.class);
+		ScriptOperations operations = mongoTemplate.scriptOps();
+		mongoTemplate.getCollectionNames().forEach(
+			name -> {
+				ExecutableMongoScript mongoScript = new ExecutableMongoScript("db." + name + ".remove({})");
+				operations.execute(mongoScript);
+			}
+		);
 	}
 	
 	/**
@@ -62,7 +69,6 @@ public class MongoScriptsTestExecutionListener extends AbstractTestExecutionList
 	 * {@link TestContext} and {@link Script.ExecutionPhase}.
 	 */
 	private void executeScriptScripts(TestContext testContext, Script.ExecutionPhase executionPhase) throws Exception {
-		boolean classLevel = false;
 		Script scriptAnnotations = AnnotatedElementUtils.getMergedAnnotation(testContext.getTestMethod(), Script.class);
 //		Set<Script> scriptAnnotations = AnnotatedElementUtils.getMergedRepeatableAnnotations(testContext.getTestMethod(), Script.class);
 //		if (scriptAnnotations.isEmpty()) {
@@ -72,9 +78,9 @@ public class MongoScriptsTestExecutionListener extends AbstractTestExecutionList
 //				classLevel = true;
 //			}
 //		}
-		
+
 //		for (Script script : scriptAnnotations) {
-			executeScriptScripts(scriptAnnotations, executionPhase, testContext, classLevel);
+		executeScriptScripts(scriptAnnotations, executionPhase, testContext, false);
 //		}
 	}
 	
@@ -82,13 +88,14 @@ public class MongoScriptsTestExecutionListener extends AbstractTestExecutionList
 	 * Execute the Script scripts configured via the supplied {@link Script @Script}
 	 * annotation for the given {@link Script.ExecutionPhase} and {@link TestContext}.
 	 * <p>Special care must be taken in order to properly support the configured
-	 * @param script the {@code @Script} annotation to parse
+	 *
+	 * @param script         the {@code @Script} annotation to parse
 	 * @param executionPhase the current execution phase
-	 * @param testContext the current {@code TestContext}
+	 * @param testContext    the current {@code TestContext}
 	 */
 	private void executeScriptScripts(Script script, Script.ExecutionPhase executionPhase, TestContext testContext, boolean classLevel)
 	throws Exception {
-		
+		if (script == null) return;
 		if (executionPhase != script.executionPhase()) {
 			return;
 		}
@@ -100,7 +107,7 @@ public class MongoScriptsTestExecutionListener extends AbstractTestExecutionList
 		EncodedResource resource = new EncodedResource(scriptResources.get(0));
 		String s = ScriptUtils.readScript(resource);
 		List<String> statements = new ArrayList<>();
-		ScriptUtils.splitSqlScript(resource,s,ScriptUtils.DEFAULT_STATEMENT_SEPARATOR,ScriptUtils.DEFAULT_COMMENT_PREFIX,ScriptUtils.DEFAULT_BLOCK_COMMENT_START_DELIMITER,ScriptUtils.DEFAULT_BLOCK_COMMENT_END_DELIMITER,statements);
+		ScriptUtils.splitSqlScript(resource, s, ScriptUtils.DEFAULT_STATEMENT_SEPARATOR, ScriptUtils.DEFAULT_COMMENT_PREFIX, ScriptUtils.DEFAULT_BLOCK_COMMENT_START_DELIMITER, ScriptUtils.DEFAULT_BLOCK_COMMENT_END_DELIMITER, statements);
 		for (String stmt : statements) {
 			if (StringUtils.hasText(stmt)) {
 				stmt = stmt.trim();
@@ -118,7 +125,7 @@ public class MongoScriptsTestExecutionListener extends AbstractTestExecutionList
 	private String[] getScripts(Script script, TestContext testContext, boolean classLevel) {
 		String[] scripts = script.scripts();
 		if (ObjectUtils.isEmpty(scripts) && ObjectUtils.isEmpty(script.statements())) {
-			scripts = new String[] {detectDefaultScript(testContext, classLevel)};
+			scripts = new String[]{detectDefaultScript(testContext, classLevel)};
 		}
 		return scripts;
 	}
@@ -148,8 +155,7 @@ public class MongoScriptsTestExecutionListener extends AbstractTestExecutionList
 				prefixedResourcePath, elementType, elementName));
 			}
 			return prefixedResourcePath;
-		}
-		else {
+		} else {
 			String msg = String.format("Could not detect default Script script for test %s [%s]: " +
 			"%s does not exist. Either declare statements or scripts via @Script or make the " +
 			"default Script script available.", elementType, elementName, classPathResource);
