@@ -1,10 +1,8 @@
-#study-example
+# 项目模块
 
 module mongo-example 
 - com.adrain.annotation.Script 实现类似@Sql注解的功能，生命周期在方法级别
 - pom 集成了sonar jacoco
-
-
 
 
 module ad-testng-spring-boot-sample  springboot集成testNg和junit4
@@ -15,8 +13,8 @@ module jpa-sample 简单的jpa演示，还有测试当中使用h2结合@Sql注�
 
 
 
-##搭建Sonarqube+posgresql
-###下载postgresql
+# 搭建Sonarqube+posgresql
+### 下载postgresql
 
 ```
 docker run --name pg -p 5432:5432 \
@@ -26,7 +24,7 @@ docker run --name pg -p 5432:5432 \
 ```
 
 
-###下载sonarqube， note:不要再去用mysql数据库了，当你启动最新的sonarqube镜像时，会报错，说最新v的sonarqube不再支持mysql
+### 下载sonarqube， note:不要再去用mysql数据库了，当你启动最新的sonarqube镜像时，会报错，说最新v的sonarqube不再支持mysql
 https://hub.docker.com/_/sonarqube/
 maven配置参考：https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-maven/
 集成jacoco:https://github.com/SonarSource/sonar-scanning-examples/tree/master/sonarqube-scanner-maven
